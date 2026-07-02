@@ -1,10 +1,10 @@
 # Muhasebe Takip Paneli
 
-Ofis içi kullanım için müvekkil bazlı aylık evrak/beyanname takip paneli ve ekip içi ortak not panosu. React + TypeScript + Vite + Tailwind CSS ile yazıldı, verileri Firebase (Firestore) üzerinde tutar.
+Ofis içi kullanım için mükellef bazlı aylık evrak/beyanname takip paneli ve ekip içi ortak not panosu. React + TypeScript + Vite + Tailwind CSS ile yazıldı, verileri Firebase (Firestore) üzerinde tutar.
 
 ## Özellikler
 
-- Müvekkil listesi, arama, müvekkil ekleme/silme
+- Mükellef listesi, arama, mükellef ekleme/silme
 - Sütunlar iki tipte olabilir: **Tik** (evet/hayır) ya da **Çoklu Durum** (kullanıcının kendi tanımladığı renkli durumlar)
 - Aylar arası gezinme — her ayın takip verisi ayrı tutulur
 - Hangi kutucuğu kimin ne zaman işaretlediğini gösteren tooltip

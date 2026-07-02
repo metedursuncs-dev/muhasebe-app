@@ -139,7 +139,7 @@ function MainApp({ currentUser, onLogout }: { currentUser: AppUser; onLogout: ()
   };
 
   const handleDeleteClient = (clientId: string) => {
-    if (!confirm('Bu müvekkili listeden kaldırmak istediğinize emin misiniz?')) return;
+    if (!confirm('Bu mükellef listeden kaldırmak istediğinize emin misiniz?')) return;
     deleteClientDoc(clientId);
   };
 
@@ -200,7 +200,7 @@ function MainApp({ currentUser, onLogout }: { currentUser: AppUser; onLogout: ()
             </h1>
             <p className="text-sm text-gray-500 mt-1">
               {activeTab === 'grid'
-                ? `${clients.length} müvekkil · ${columns.length} kalem`
+                ? `${clients.length} mükellef · ${columns.length} kalem`
                 : 'Ekip içi paylaşılan hatırlatmalar'}
             </p>
           </div>
@@ -248,7 +248,7 @@ function MainApp({ currentUser, onLogout }: { currentUser: AppUser; onLogout: ()
                         onClick={() => { setModal('client'); setShowAddMenu(false); }}
                         className="block w-full text-left px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        Müvekkil Ekle
+                        Mükellef Ekle
                       </button>
                       <button
                         onClick={() => { setModal('column'); setShowAddMenu(false); }}
@@ -305,9 +305,9 @@ function AddClientModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
       <form onClick={e => e.stopPropagation()} onSubmit={submit} className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
-        <h3 className="text-lg font-bold text-gray-800 mb-4">Yeni Müvekkil Ekle</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-4">Yeni Mükellef Ekle</h3>
 
-        <label className="block text-xs font-medium text-gray-500 mb-1.5">Müvekkil Numarası</label>
+        <label className="block text-xs font-medium text-gray-500 mb-1.5">Mükellef Numarası</label>
         <input
           autoFocus
           value={companyCode}
@@ -316,7 +316,7 @@ function AddClientModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: 
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm"
         />
 
-        <label className="block text-xs font-medium text-gray-500 mt-4 mb-1.5">Müvekkil Adı</label>
+        <label className="block text-xs font-medium text-gray-500 mt-4 mb-1.5">Mükellef Adı</label>
         <input
           value={name}
           onChange={e => setName(e.target.value)}

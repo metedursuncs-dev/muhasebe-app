@@ -121,7 +121,7 @@ export default function TrackingGrid({
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Müvekkil ara..."
+            placeholder="Mükellef ara..."
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all"
           />
         </div>
@@ -134,7 +134,7 @@ export default function TrackingGrid({
       {/* Tablo */}
       {clients.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-          <p className="text-sm">Henüz müvekkil eklenmedi.</p>
+          <p className="text-sm">Henüz mükellef eklenmedi.</p>
           <p className="text-xs mt-1">Sağ üstteki (+) butonundan ekleyebilirsiniz.</p>
         </div>
       ) : (
@@ -143,7 +143,7 @@ export default function TrackingGrid({
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/70">
                 <th className="sticky left-0 z-20 bg-gray-50/70 backdrop-blur text-left font-semibold text-gray-600 px-5 py-3 min-w-[220px]">
-                  Müvekkil
+                  Mükellef
                 </th>
                 {columns.map(col => (
                   <th key={col.id} className="group font-semibold text-gray-600 px-4 py-3 text-center min-w-[130px] whitespace-nowrap">
@@ -234,7 +234,7 @@ export default function TrackingGrid({
                     <button
                       onClick={() => onDeleteClient(client.id)}
                       className="opacity-0 group-hover/row:opacity-100 text-gray-300 hover:text-rose-500 transition-opacity"
-                      title="Müvekkili sil"
+                      title="Mükellefi sil"
                     >
                       🗑
                     </button>
@@ -244,7 +244,7 @@ export default function TrackingGrid({
               {filteredClients.length === 0 && (
                 <tr>
                   <td colSpan={columns.length + 3} className="text-center text-gray-400 text-sm py-10">
-                    "{search}" ile eşleşen müvekkil bulunamadı.
+                    "{search}" ile eşleşen mükellef bulunamadı.
                   </td>
                 </tr>
               )}
