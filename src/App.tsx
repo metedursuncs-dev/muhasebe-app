@@ -119,17 +119,16 @@ function MainApp({ currentUser, onLogout }: { currentUser: AppUser; onLogout: ()
   const goToPrevMonth = () => setMonthDate(d => new Date(d.getFullYear(), d.getMonth() - 1, 1));
   const goToNextMonth = () => setMonthDate(d => new Date(d.getFullYear(), d.getMonth() + 1, 1));
 
-  const nextClientCode = useMemo(() => {
-    const maxCode = clients.reduce((max, c) => Math.max(max, parseInt(c.companyCode, 10) || 0), 0);
-    return String(maxCode + 1).padStart(4, '0');
-  }, [clients]);
-
   const handleCellChange = (clientId: string, columnId: string, value: string | null) => {
     setCellValue(clientId, columnId, monthKey, value, currentUser.displayName);
   };
 
-  const handleAddClient = (name: string) => {
-    addClientDoc(nextClientCode, name);
+  const handleAddClient = (companyCode: string, name: string) => {
+    if (clients.some(c => c.companyCode === companyCode)) {
+      alert(`"${companyCode}" numarası zaten kullanılıyor. Başka bir numara girin.`);
+      return;
+    }
+    addClientDoc(companyCode, name);
     setModal(null);
   };
 
@@ -293,21 +292,32 @@ function MainApp({ currentUser, onLogout }: { currentUser: AppUser; onLogout: ()
   );
 }
 
-function AddClientModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (name: string) => void }) {
+function AddClientModal({ onClose, onSubmit }: { onClose: () => void; onSubmit: (companyCode: string, name: string) => void }) {
+  const [companyCode, setCompanyCode] = useState('');
   const [name, setName] = useState('');
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    onSubmit(name.trim());
+    if (!companyCode.trim() || !name.trim()) return;
+    onSubmit(companyCode.trim(), name.trim());
   };
 
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/30 p-4" onClick={onClose}>
       <form onClick={e => e.stopPropagation()} onSubmit={submit} className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Yeni Müvekkil Ekle</h3>
+
+        <label className="block text-xs font-medium text-gray-500 mb-1.5">Müvekkil Numarası</label>
         <input
           autoFocus
+          value={companyCode}
+          onChange={e => setCompanyCode(e.target.value)}
+          placeholder="Örn. 0206"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all text-sm"
+        />
+
+        <label className="block text-xs font-medium text-gray-500 mt-4 mb-1.5">Müvekkil Adı</label>
+        <input
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Örn. Kaan Elektronik Ltd. Şti."
