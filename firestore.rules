@@ -1,0 +1,34 @@
+rules_version = '2';
+
+// Bu uygulama kendi kullanıcı adı/şifre sistemini kullanıyor (Firebase Authentication değil).
+// Firestore kuralları "giriş yapmış" olmayı ayırt edemediği için, istemci tarafında anonim bir
+// Firebase Auth oturumu açılıyor (bkz. src/firebase.ts) ve tüm kurallar "request.auth != null"
+// şartına dayanıyor. Bu, rastgele bir ziyaretçinin siteye hiç girmeden veriyi kazımasını zorlaştırır
+// ama gerçek kullanıcı ayrımı yapmaz — 3 kişilik dahili bir ofis aracı için kabul edilebilir bir
+// basitleştirme. Daha güçlü güvenlik için ileride gerçek Firebase Authentication (e-posta/şifre)
+// kullanılması önerilir.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Kullanıcılar sadece Firebase Console üzerinden elle eklenir/silinir; istemciden yazılamaz.
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+
+    match /clients/{clientId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /columns/{columnId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /cellData/{cellId} {
+      allow read, write: if request.auth != null;
+    }
+
+    match /notes/{noteId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
