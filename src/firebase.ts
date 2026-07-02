@@ -54,14 +54,6 @@ function ensureAnonymousSession(): Promise<void> {
   return anonymousSession;
 }
 
-async function sha256Hex(text: string): Promise<string> {
-  const bytes = new TextEncoder().encode(text);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', bytes);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
 export interface AppUser {
   id: string;
   username: string;
@@ -71,14 +63,13 @@ export interface AppUser {
 
 // --- GİRİŞ ---
 // Kullanıcılar Firestore'daki "users" koleksiyonunda tutulur ve Firebase Console üzerinden
-// elle eklenir (bkz. scripts/hash-password.mjs ve firestore.rules). Kayıt/self servis yoktur.
+// elle eklenir (bkz. firestore.rules). Kayıt/self servis yoktur.
 export async function loginUser(username: string, password: string): Promise<AppUser> {
   await ensureAnonymousSession();
-  const passwordHash = await sha256Hex(password);
   const normalized = username.trim().toLocaleLowerCase('tr-TR');
 
   const snap = await getDocs(query(collection(db, 'users'), where('username', '==', normalized)));
-  const match = snap.docs.find(d => d.data().passwordHash === passwordHash);
+  const match = snap.docs.find(d => d.data().password === password);
   if (!match) {
     throw new Error('Kullanıcı adı veya şifre hatalı.');
   }

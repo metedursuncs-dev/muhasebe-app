@@ -27,10 +27,7 @@ Bu proje kendi Firebase projesine bağlıdır (`src/firebase.ts` içindeki `fire
 3. **Güvenlik kurallarını** yapıştırın: Firebase Console > Firestore Database > Rules sekmesine bu reponun kökündeki [`firestore.rules`](firestore.rules) dosyasının içeriğini yapıştırıp yayınlayın (Publish).
 4. **Kullanıcıları elle oluşturun**: Firebase Console > Firestore Database > `users` koleksiyonuna, her kullanıcı için bir doküman ekleyin:
    - `username`: küçük harf kullanıcı adı (örn. `mete.dursun`)
-   - `passwordHash`: şifrenin SHA-256 hash'i — kendi bilgisayarınızda üretin, şifreyi hiçbir yere yazmayın:
-     ```bash
-     node scripts/hash-password.mjs "sifreniz"
-     ```
+   - `password`: düz metin şifre
    - `displayName`: ekranda görünecek ad (örn. `Mete Dursun`)
    - `role`: `admin`
 
@@ -38,7 +35,7 @@ Kayıt/self-servis akışı yoktur — kullanıcılar sadece Firebase Console'da
 
 ## Güvenlik notu
 
-Uygulama Firebase Authentication yerine basit bir kullanıcı adı/şifre kontrolü kullanır (Firestore'daki `users` koleksiyonuna karşı, istemci tarafında karşılaştırma). Bu, kurulumu kolaylaştırır ama gerçek kullanıcı ayrımı yapamaz; tüm koleksiyonlar sadece "bir Firebase oturumu var mı" şartına göre korunur. Küçük, dahili bir ekip aracı için kabul edilebilir bir basitleştirmedir. Daha yüksek güvenlik gerekiyorsa Firebase Authentication'a (e-posta/şifre) geçilmesi önerilir.
+Uygulama Firebase Authentication yerine basit bir kullanıcı adı/şifre kontrolü kullanır (Firestore'daki `users` koleksiyonuna karşı, istemci tarafında düz metin karşılaştırma). Bu, kurulumu kolaylaştırır ama gerçek kullanıcı ayrımı yapamaz ve şifreler Firestore'da düz metin olarak durur; tüm koleksiyonlar sadece "bir Firebase oturumu var mı" şartına göre korunur. Küçük, dahili bir ekip aracı için kabul edilebilir bir basitleştirmedir. Daha yüksek güvenlik gerekiyorsa Firebase Authentication'a (e-posta/şifre) geçilmesi önerilir.
 
 ## Komutlar
 
