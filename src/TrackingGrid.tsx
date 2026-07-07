@@ -51,6 +51,7 @@ export default function TrackingGrid({
   const [search, setSearch] = useState('');
   const [menu, setMenu] = useState<{ clientId: string; columnId: string; top: number; left: number } | null>(null);
   const [tip, setTip] = useState<{ top: number; left: number; text: string } | null>(null);
+  const [sort, setSort] = useState<{ key: 'client' | string; dir: 'asc' | 'desc' } | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -92,11 +93,45 @@ export default function TrackingGrid({
     });
   };
 
+  const toggleSort = (key: 'client' | string) => {
+    setSort(prev => {
+      if (!prev || prev.key !== key) return { key, dir: 'asc' };
+      if (prev.dir === 'asc') return { key, dir: 'desc' };
+      return null;
+    });
+  };
+
+  const columnRank = (client: Client, col: TaskColumn) => {
+    const entry = cellData[cellKey(client.id, col.id)];
+    if (col.type === 'checkbox') return entry?.value === CHECKED ? 1 : 0;
+    if (!entry) return -1;
+    const idx = col.statuses?.findIndex(s => s.key === entry.value) ?? -1;
+    return idx;
+  };
+
   const filteredClients = clients.filter(c => {
     const q = search.trim().toLocaleLowerCase('tr-TR');
     if (!q) return true;
     return c.name.toLocaleLowerCase('tr-TR').includes(q) || c.companyCode.toLocaleLowerCase('tr-TR').includes(q);
   });
+
+  const sortedClients = [...filteredClients];
+  if (sort) {
+    const dirMul = sort.dir === 'asc' ? 1 : -1;
+    if (sort.key === 'client') {
+      sortedClients.sort((a, b) => {
+        const numA = parseInt(a.companyCode, 10);
+        const numB = parseInt(b.companyCode, 10);
+        const cmp = !isNaN(numA) && !isNaN(numB) ? numA - numB : a.companyCode.localeCompare(b.companyCode);
+        return cmp * dirMul;
+      });
+    } else {
+      const col = columns.find(c => c.id === sort.key);
+      if (col) {
+        sortedClients.sort((a, b) => (columnRank(a, col) - columnRank(b, col)) * dirMul);
+      }
+    }
+  }
 
   const completion = (clientId: string) => {
     if (columns.length === 0) return 0;
@@ -142,15 +177,26 @@ export default function TrackingGrid({
           <table className="w-full text-sm border-collapse min-w-[720px]">
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/70">
-                <th className="sticky left-0 z-20 bg-gray-50/70 backdrop-blur text-left font-semibold text-gray-600 px-5 py-3 min-w-[220px]">
-                  Mükellef
+                <th
+                  onClick={() => toggleSort('client')}
+                  className="sticky left-0 z-20 bg-gray-50/70 backdrop-blur text-left font-semibold text-gray-600 px-5 py-3 min-w-[220px] cursor-pointer select-none hover:text-gray-900"
+                >
+                  <span className="inline-flex items-center gap-1">
+                    Mükellef
+                    {sort?.key === 'client' && <span className="text-[10px]">{sort.dir === 'asc' ? '▲' : '▼'}</span>}
+                  </span>
                 </th>
                 {columns.map(col => (
-                  <th key={col.id} className="group font-semibold text-gray-600 px-4 py-3 text-center min-w-[130px] whitespace-nowrap">
+                  <th
+                    key={col.id}
+                    onClick={() => toggleSort(col.id)}
+                    className="group font-semibold text-gray-600 px-4 py-3 text-center min-w-[130px] whitespace-nowrap cursor-pointer select-none hover:text-gray-900"
+                  >
                     <span className="inline-flex items-center gap-1.5">
                       {col.title}
+                      {sort?.key === col.id && <span className="text-[10px]">{sort.dir === 'asc' ? '▲' : '▼'}</span>}
                       <button
-                        onClick={() => onDeleteColumn(col.id)}
+                        onClick={e => { e.stopPropagation(); onDeleteColumn(col.id); }}
                         className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-rose-500 transition-opacity"
                         title="Sütunu sil"
                       >
@@ -173,7 +219,7 @@ export default function TrackingGrid({
               </tr>
             </thead>
             <tbody>
-              {filteredClients.map((client, idx) => (
+              {sortedClients.map((client, idx) => (
                 <tr key={client.id} className={`group/row border-b border-gray-50 hover:bg-indigo-50/30 transition-colors ${idx % 2 === 1 ? 'bg-gray-50/40' : ''}`}>
                   <td className="sticky left-0 z-10 bg-inherit px-5 py-3">
                     <div className="flex items-center gap-3">
@@ -241,7 +287,7 @@ export default function TrackingGrid({
                   </td>
                 </tr>
               ))}
-              {filteredClients.length === 0 && (
+              {sortedClients.length === 0 && (
                 <tr>
                   <td colSpan={columns.length + 3} className="text-center text-gray-400 text-sm py-10">
                     "{search}" ile eşleşen mükellef bulunamadı.
